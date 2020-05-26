@@ -11,7 +11,10 @@ import br.com.ecommerce.dao.InnerJoinProdutoUsuarioDAO;
 import br.com.ecommerce.dao.ProdutoDAO;
 import br.com.ecommerce.dao.RelatorioUsuarioDAO;
 import br.com.ecommerce.enumeracoes.EstadoProduto;
+import br.com.ecommerce.file.FileRelatorio;
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -230,10 +233,13 @@ public class TelaFinalizarCompra extends PosicaoInternalFrame {
             try{
                 new RelatorioUsuarioDAO().gerarRelatorioUsuario(id_usuario, id_endereco, dir);
                 JOptionPane.showMessageDialog(null, "Relatório gerado com sucesso!");
+                new FileRelatorio(dir).completarRelatorioUsuario();
                 limparCarrinho();
                 dispose();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch(IOException e1) {
+                e1.printStackTrace();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Ocorreu algum erro no banco de dados");
             }
         }
