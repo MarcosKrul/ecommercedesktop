@@ -5,6 +5,7 @@
  */
 package br.com.ecommerce.view.main;
 
+import br.com.ecommerce.classes.CarregaDadosModeloUsuario;
 import br.com.ecommerce.classes.Produto;
 import br.com.ecommerce.classes.Usuario;
 import br.com.ecommerce.dao.FiltroDAO;
@@ -57,7 +58,8 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
         setResizable(false);
         modelo = new ModeloMainUsuario();
         tabela_main_usuario.setModel(modelo);
-        suporteCarregaDados();
+//        suporteCarregaDados();
+        new Thread(new CarregaDadosModeloUsuario(modelo)).start();
         suporteCarregaItensCombo();
         comboListener();
     }
@@ -66,19 +68,19 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
         this.usuario = usuario;
     }
     
-    private void suporteCarregaDados() {
-        modelo.clearMap();
-        try {
-            List<Produto> lista;
-            if((lista = new ProdutoDAO().listaProdutosUsuario(true, -1)) != null)
-                for(Produto aux : lista)
-                    if(aux.getSituacao() == EstadoProduto.ESTOQUE)
-                        modelo.addProduto(aux, false);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Ocorreu algum erro no banco de dados");
-        }
-    }
+//    private void suporteCarregaDados() {
+//        modelo.clearMap();
+//        try {
+//            List<Produto> lista;
+//            if((lista = new ProdutoDAO().listaProdutosUsuario(true, -1)) != null)
+//                for(Produto aux : lista)
+//                    if(aux.getSituacao() == EstadoProduto.ESTOQUE)
+//                        modelo.addProduto(aux, false);
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Ocorreu algum erro no banco de dados");
+//        }
+//    }
     
     private void suporteCarregaItensCombo (){
         List<String> categorias = null;
@@ -97,7 +99,7 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED){
                     String categoria = (String) combobox_mainuser.getSelectedItem();
-                    if(categoria.equals("Todas")) suporteCarregaDados();
+                    if(categoria.equals("Todas")) new Thread(new CarregaDadosModeloUsuario(modelo)).start();
                     else {
                         List<Produto> list = null;
                         try {
@@ -108,7 +110,7 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
                         }
                         if(list == null) {
                             JOptionPane.showMessageDialog(null, "Nenhum produto disponível nesta categoria");
-                            suporteCarregaDados();
+                            new Thread(new CarregaDadosModeloUsuario(modelo)).start();
                             return;
                         }
                         modelo.clearMap();
@@ -550,12 +552,12 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
         tela.setPosicao();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {                                           
         TelaLimparCarrinho tela = new TelaLimparCarrinho(usuario.getId(), modelo);
         jDesktopPane1.add(tela);
         tela.setVisible(true);
         tela.setPosicao();
-    }//GEN-LAST:event_jMenuItem6ActionPerformed	
+    }                                           
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
         TelaDeletarUsuario tela = new TelaDeletarUsuario(usuario.getId());
@@ -602,7 +604,7 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
         String sMinimo = in_mainuser_minimo.getText();
         String sMaximo = in_mainuser_maximo.getText();
         if(sMinimo.equals("") && sMaximo.equals("")){
-            suporteCarregaDados();
+            new Thread(new CarregaDadosModeloUsuario(modelo)).start();
             in_mainuser_nomebusca.setText("");
             combobox_mainuser.setSelectedItem("Todas");
             return;
@@ -637,7 +639,7 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
         }
         if(list == null) {
             JOptionPane.showMessageDialog(null, "Nenhum produto corresponde a busca");
-            suporteCarregaDados();
+            new Thread(new CarregaDadosModeloUsuario(modelo)).start();
             cleanFiltrosPreco();
             in_mainuser_nomebusca.setText("");
             combobox_mainuser.setSelectedItem("Todas");
@@ -654,7 +656,7 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
     private void btn_mainuser_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mainuser_buscarActionPerformed
         String nomeBusca = in_mainuser_nomebusca.getText();
         if(nomeBusca.equals("")){
-            suporteCarregaDados();
+            new Thread(new CarregaDadosModeloUsuario(modelo)).start();
             cleanFiltrosPreco();
             return;
         }
@@ -668,7 +670,7 @@ public final class TelaPrincipalUsuario extends javax.swing.JFrame {
         }
         if(list == null){
             JOptionPane.showMessageDialog(null, "Nenhum produto corresponde a busca");
-            suporteCarregaDados();
+            new Thread(new CarregaDadosModeloUsuario(modelo)).start();
             in_mainuser_nomebusca.setText("");
             return;
         }
