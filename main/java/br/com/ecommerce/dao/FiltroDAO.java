@@ -66,20 +66,21 @@ public class FiltroDAO {
     
         String sql = "select * from produtos where preco";
         sql += max == null? " >= "+min : " between "+min+" and "+max;
+        sql += " and situacao = 1";
         return daoBase(sql);
 
     }
     
     public List<Produto> buscarNome(String nome) throws SQLException {
     
-        String sql = "select * from produtos where nome like  '%"+nome+"%'";
+        String sql = "select * from produtos where nome like  '%"+nome+"%' and situacao = 1";
         return daoBase(sql);
         
     }
     
     public List<Produto> separaPorCategoria (String categoria) throws SQLException {
     
-        String sql = "select * from produtos where categoria = '"+categoria+"'";
+        String sql = "select * from produtos where categoria = '"+categoria+"' and situacao = 1";
         return daoBase(sql);
         
     }
